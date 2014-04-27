@@ -4,10 +4,16 @@ from flask.ext.sqlalchemy import SQLAlchemy
 from flask.ext.login import LoginManager
 from datetime import timedelta
 from itsdangerous import URLSafeTimedSerializer
-from config import SQLALCHEMY_DATABASE_URI
+import os
 app = Flask(__name__)
 from sqlalchemy import create_engine
-app.config['SQLALCHEMY_DATABASE_URI'] = SQLALCHEMY_DATABASE_URI
+try:
+  from config import SQLALCHEMY_DATABASE_URI
+  app.config['SQLALCHEMY_DATABASE_URI'] = SQLALCHEMY_DATABASE_URI
+except ImportError:
+  app.config['SQLALCHEMY_DATABASE_URI'] = os.environ["DATABASE_URL"]
+  pass
+
 app.secret_key = "THISISASUPERSECRETKEY"
 app.config["REMEMBER_COOKIE_DURATION"] = timedelta(days=14)
 login_serializer = URLSafeTimedSerializer(app.secret_key)
