@@ -1,0 +1,140 @@
+@font-face {
+  font-family: 'Lato-Light';
+  src: url('../fonts/lato/Lato-Lig.ttf');
+}
+body {
+  font-family: 'Lato-Light';
+}
+/*****************
+/* Navbar       */
+/****************/
+.navbar {
+  width: 100%;
+  height: 40px;
+  background: #2980b9;
+  -webkit-transition: height 1s;
+  transition: height 1s;
+  position: fixed;
+  z-index: 10;
+}
+
+.menu-wrapper {
+  background-color: #2980b9;
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 40px;
+  height: 40px;
+  text-align: center;
+  cursor: pointer;
+}
+
+.menu {
+  font-size: 40px;
+}
+
+.seeker {
+  width: 80%;
+  position: absolute;
+  top: 10px;
+  left: 50px;
+  background: white;
+  height: 20px;
+}
+
+.position {
+  background: black;
+  height: 20px;
+  width: 0;
+}
+
+/*Hide youtube player outside of screen */
+object {
+  position: fixed;
+  top: 100%;
+}
+
+.hide {
+  display: none;
+}
+
+.controls {
+  width: 13%;
+  position: absolute;
+  left: 87%;
+  top: 5px;
+}
+
+.controls a {
+  cursor: pointer;
+}
+
+/***********************
+ * Main Content
+ * *********************/
+
+.content {
+  position: absolute;
+  top: 40px;
+  width: 100%;
+}
+
+.feeds {
+  position: fixed;
+  background-color: #e74c3c;
+  min-height: 100%;
+  top: 40px;
+  left: -20%;
+  width: 20%;
+  -webkit-transition: all .5s;
+  transition: all .5s;
+}
+
+.feeds.active{
+  left: 0;
+}
+
+#feed-list li {
+  cursor: pointer;
+}
+
+#feed-list li .view {
+  height: 100%;
+  width: 100%;
+  padding: 20px;
+}
+
+#feed-list li:hover,
+#feed-list li.active {
+  background-color: #c0392b;
+}
+
+.songs {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  -webkit-transition: all .5s;
+  transition: all .5s;
+  background-color: #ecf0f1;
+}
+
+.songs.active {
+  left: 20%;
+  width: 80%;
+}
+
+#song-list li{
+  cursor: pointer;
+}
+
+#song-list li .view {
+  width: 100%;
+  height: 100%;
+  padding: 20px;
+}
+
+#song-list li:hover,
+#song-list li.playing {
+  background-color: #bdc3c7;
+}

@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <title>RSS For Music Lovers</title>
+    <link rel="stylesheet" href="static/stylesheets/reset.css"/>
+    <link rel="stylesheet" href="static/stylesheets/pymusic.css"/>
+    <script src="static/js/jquery-1.11.0.min.js"></script>
+    <script src="static/js/underscore-min.js"></script>
+    <script src="static/js/backbone-min.js"></script>
+    <script src="//connect.soundcloud.com/sdk.js"></script>
+    <script type="text/javascript" src="static/js/swfobject.js"></script> 
+    <script src="static/js/pymusic.js"></script>
+    <script type="text/javascript">
+
+      var params = { allowScriptAccess: "always" };
+      var atts = { id: "myytplayer" };
+      swfobject.embedSWF("http://www.youtube.com/apiplayer?enablejsapi=1&version=3",
+        "ytplayer", "425", "356", "8", null, null, params, atts);
+
+      function onYouTubePlayerReady(playerId){
+        player.ytPlayer = document.getElementById("myytplayer");
+        setInterval(function(){
+          var state = player.ytPlayer.getPlayerState();
+          if(state == 0){
+            player.next();
+          }
+        }, 10);
+        $(".content").removeClass('hide');
+      }
+</script>
+  </head>
+  <body>
+    <div id="song-app">
+      <div class="navbar">
+        <div class="menu-wrapper">
+          <a class="menu">&#9776;</a>
+        </div>
+        <div class="seeker"><div class="position"></div></div>
+        <div class="controls">
+          <a class="previous"><img src="static/images/previous.png"/></a>
+          <a class="play"><img src="static/images/play.png"/></a>
+          <a class="pause"><img src="static/images/pause.png"/></a>
+          <a class="next"><img src="static/images/next.png"/></a>
+        </div>
+      </div>
+
+      <div class="content hide">
+        <div class="feeds">
+          <ul id="feed-list"></ul>
+        </div>
+        <div class="songs">
+          <ul id="song-list"></ul>
+        </div>
+      </div>
+    </div>
+    <div id="ytplayer"></div>
+    <script type="text/template" id="song-template">
+      <div class="view" data-song_id="<%= song_id %>" data-player_id="<%= player_id %>">
+        <p><%= title %></p>
+      </div>
+    </script>
+    <script type="text/template" id="feed-template">
+      <div class="view" data-feed_id="<%= id %>">
+        <p><%= title %></p>
+      </div>
+    </div>
+  </body>
+</html>

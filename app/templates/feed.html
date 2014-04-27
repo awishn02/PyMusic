@@ -1,0 +1,15 @@
+{% block content %}
+<h1>Url</h1>
+<form action="" method="post" name="feed">
+  {{form.hidden_tag()}}
+  <p>
+    Enter feed url:<br>
+    {{form.url(size=80)}}
+  </p>
+  <p>
+    Enter feed title:<br>
+    {{form.title(size=80)}}
+  </p>
+  <p><input type="submit" value="Submit"></p>
+</form>
+{% endblock %}
