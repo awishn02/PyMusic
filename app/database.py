@@ -12,15 +12,17 @@ except ImportError:
   engine = create_engine(os.environ['DATABASE_URL'], convert_unicode=True)
   pass
 
-db_session = scoped_session(sessionmaker(autocommit=False,
-                                         autoflush=False,
-                                         bind=engine))
-db_session._model_changes = {}
+session = sessionmaker(autocommit=False,
+    autoflush=False,
+    bind=engine)
+session._model_changes = {}
+db_session = scoped_session(session)
+
 Base = declarative_base()
 Base.query = db_session.query_property()
 
 def init_db():
-    # import all modules here that might define models so that
+  # import all modules here that might define models so that
     # they will be registered properly on the metadata.  Otherwise
     # you will have to import them first before calling init_db()
     import models
