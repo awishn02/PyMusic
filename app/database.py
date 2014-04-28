@@ -8,6 +8,7 @@ try:
   engine = create_engine(SQLALCHEMY_DATABASE_URI, convert_unicode=True)
 except ImportError:
   engine = create_engine(os.environ['DATABASE_URL'], convert_unicode=True)
+  pass
 
 db_session = scoped_session(sessionmaker(autocommit=False,
                                          autoflush=False,
