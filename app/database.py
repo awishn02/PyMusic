@@ -17,6 +17,7 @@ session = sessionmaker(autocommit=False,
     bind=engine)
 session._model_changes = {}
 db_session = scoped_session(session)
+db_session = session
 
 Base = declarative_base()
 Base.query = db_session.query_property()
