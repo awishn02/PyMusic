@@ -84,13 +84,9 @@ def drop_all():
 def feed():
   form = FeedForm()
   if form.validate_on_submit():
-    print form
     feed = models.Feed(url=form.url.data,title=form.title.data)
-    print "here"
     db_session.add(feed)
-    print "added"
     db_session.commit()
-    print "committed"
     return redirect('/')
   return render_template('feed.html',form=form)
 
