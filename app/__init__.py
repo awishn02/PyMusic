@@ -1,6 +1,5 @@
 from flask import Flask
 from flaskext.bcrypt import Bcrypt
-from flask.ext.sqlalchemy import SQLAlchemy
 from flask.ext.login import LoginManager
 from datetime import timedelta
 from itsdangerous import URLSafeTimedSerializer
@@ -17,7 +16,7 @@ except ImportError:
 app.secret_key = "THISISASUPERSECRETKEY"
 app.config["REMEMBER_COOKIE_DURATION"] = timedelta(days=14)
 login_serializer = URLSafeTimedSerializer(app.secret_key)
-db = SQLAlchemy(app)
+# db = SQLAlchemy(app)
 bcrypt = Bcrypt(app)
 lm = LoginManager()
 lm.init_app(app)
