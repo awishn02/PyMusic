@@ -1,5 +1,5 @@
 from pprint import pprint
-from app import app, models, db, lm, login_serializer
+from app import app, models, lm, login_serializer
 import datetime, time, urllib, urllib2, httplib2, json, re, feedparser, sys
 import flask
 from flaskext.bcrypt import Bcrypt
@@ -77,7 +77,7 @@ def del_songs():
 
 @app.route('/drop_all')
 def drop_all():
-  db.drop_all()
+  # db.drop_all()
   return "Dropped"
 
 @app.route('/feeds', methods=['GET','POST'])
