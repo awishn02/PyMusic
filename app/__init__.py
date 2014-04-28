@@ -1,9 +1,10 @@
+import os
 from flask import Flask
 from flaskext.bcrypt import Bcrypt
 from flask.ext.login import LoginManager
+from flask.ext.openid import OpenID
 from datetime import timedelta
 from itsdangerous import URLSafeTimedSerializer
-import os
 app = Flask(__name__)
 from sqlalchemy import create_engine
 try:
@@ -20,7 +21,6 @@ login_serializer = URLSafeTimedSerializer(app.secret_key)
 bcrypt = Bcrypt(app)
 lm = LoginManager()
 lm.init_app(app)
-lm.login_view = "/"
 from app import views, models
 from database import db_session
 

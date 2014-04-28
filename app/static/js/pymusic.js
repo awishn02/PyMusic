@@ -2,10 +2,19 @@ SOUNDCLOUD = 0
 YOUTUBE = 1
 $(function(){
   var Feed = Backbone.Model.extend();
-  
+
   var FeedList = Backbone.Collection.extend({
     model: Feed,
-    url: '/feeds.json'
+    url: function(){
+      search = $("#search-feeds").val()
+      if (search != ""){
+        return '/feeds.json?search='+search;
+      }
+      if ($("#feed-list").hasClass('editing')){
+        return '/feeds.json?all=1'
+      }
+      return '/feeds.json';
+    }
   });
 
   var Feeds = new FeedList;
@@ -21,15 +30,17 @@ $(function(){
       "click .view" : "filterByFeed"
     },
     filterByFeed: function(){
-      feed_id = this.$el.find('.view').data('feed_id');
-      $("#feed-list li").removeClass('active');
-      if (feed_id == Songs.feed_id){
-        Songs.feed_id = null
-      }else{
-        this.$el.addClass('active');
-        Songs.feed_id = feed_id;
+      if (!$("#feed-list").hasClass('editing')){
+        feed_id = this.$el.find('.view').data('feed_id');
+        $("#feed-list li").removeClass('active');
+        if (feed_id == Songs.feed_id){
+          Songs.feed_id = null
+        }else{
+          this.$el.addClass('active');
+          Songs.feed_id = feed_id;
+        }
+        Songs.fetch({reset:true});
       }
-      Songs.fetch({reset:true});
     }
   });
 
@@ -86,6 +97,15 @@ $(function(){
       Feeds.fetch({reset:true});
       Songs.fetch({reset:true});
     },
+    events: {
+      "click .pause"    : "pause",
+      "click .play"     : "play",
+      "click .next"     : "next",
+      "click .previous" : "previous",
+      "click .edit"     : "edit",
+      "keyup #search-feeds" : "search",
+      "click .bookmark" : "bookmark"
+    },
     addOne: function(song){
       var view = new SongView({model:song});
       this.$("#song-list").append(view.render().el);
@@ -98,10 +118,52 @@ $(function(){
       var view = new FeedView({model:feed});
       this.$("#feed-list").append(view.render().el);
     },
+    pause: function(){
+      player.pause();
+    },
+    play: function(){
+      player.resume();
+    },
+    next: function(){
+      player.next();
+    },
+    previous: function(){
+      player.previous();
+    },
     populateFeedList: function(){
+      this.$("#feed-list").empty();
       Feeds.each(this.addFeed);
-    }
+    },
+    edit: function(){
+      if($("#search-feeds").hasClass('hidden')){
+        $("#search-feeds").removeClass('hidden');
+        $("#feed-list").addClass('editing');
+        Feeds.fetch({reset:true});
+      }else{
+        $("#search-feeds").addClass('hidden');
+        $("#feed-list").removeClass('editing');
+        Feeds.fetch({reset:true});
+      }
+    },
+    search: function(){
+      clearTimeout(searchTimer);
+      searchTimer = setTimeout(function(){
+        Feeds.fetch({reset:true});
+      }, 300);
+    },
+    bookmark: function(e){
+      $(e.target).toggleClass('bookmarked');
+      console.log(e.target);
+      var feed_id = $(e.target).parent().parent().data('feed_id');
+      var user_id = $("#edit-feed").data('user_id');
+      $.ajax({
+        url: '/favorite?user_id='+user_id+'&feed_id='+feed_id,
+        type: 'POST'
+      });
+    },
   });
+
+  var searchTimer = null;
 
   var App = new AppView;
 
@@ -112,24 +174,14 @@ $(function(){
     player.seek(newpos);
   });
 
-  $('.pause').click(function(){
-    player.pause();
-  });
-
-  $('.play').click(function(){
-    player.resume();
-  });
-
-  $('.next').click(function(){
-    player.next();
-  });
-  $('.previous').click(function(){
-    player.previous();
-  });
-
   $(".menu").click(function(){
     $(".songs").toggleClass('active');
     $(".feeds").toggleClass('active');
+    $(".navbar").toggleClass('active');
+    $("#search-feeds").addClass('hidden');
+    $("#feed-list").removeClass('editing');
+    $("#search-feeds").hide();
+    setTimeout(function(){ $('#search-feeds').show()},400);
   })
 
   player.seeker = $('.seeker');

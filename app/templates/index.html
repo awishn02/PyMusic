@@ -1,3 +1,4 @@
+{% block content %}
 <!DOCTYPE html>
 <html lang="en">
   <head>
@@ -26,6 +27,7 @@
             player.next();
           }
         }, 10);
+        $(".loading").addClass('hide');
         $(".content").removeClass('hide');
       }
 </script>
@@ -33,21 +35,36 @@
   <body>
     <div id="song-app">
       <div class="navbar">
-        <div class="menu-wrapper">
-          <a class="menu">&#9776;</a>
+        <div class="navbar-top">
+          {% if user %}
+            <a href="/logout">Logout</a>
+          {% else %}
+            <a href="/login">Login</a>
+          {% endif %}
         </div>
-        <div class="seeker"><div class="position"></div></div>
-        <div class="controls">
-          <a class="previous"><img src="static/images/previous.png"/></a>
-          <a class="play"><img src="static/images/play.png"/></a>
-          <a class="pause"><img src="static/images/pause.png"/></a>
-          <a class="next"><img src="static/images/next.png"/></a>
+        <div class="navbar-bottom">
+          <div class="menu-wrapper">
+            <a class="menu">&#9776;</a>
+          </div>
+          <div class="seeker"><div class="position"></div></div>
+          <div class="controls">
+            <a class="previous"><img src="static/images/previous.png"/></a>
+            <a class="play"><img src="static/images/play.png"/></a>
+            <a class="pause"><img src="static/images/pause.png"/></a>
+            <a class="next"><img src="static/images/next.png"/></a>
+          </div>
         </div>
       </div>
 
-      <div class="content hide">
+      <div class="content">
         <div class="feeds">
+          <input id="search-feeds" type="text" class="hidden" />
           <ul id="feed-list"></ul>
+          {% if user %}
+          <div id="edit-feed" data-user_id="{{user.id}}">
+            <a class="edit"><img src="static/images/pencil.png"/></a>
+          </div>
+          {% endif %}
         </div>
         <div class="songs">
           <ul id="song-list"></ul>
@@ -62,8 +79,9 @@
     </script>
     <script type="text/template" id="feed-template">
       <div class="view" data-feed_id="<%= id %>">
-        <p><%= title %></p>
+        <p><%= title %><a class="bookmark"></a></p>
       </div>
     </div>
   </body>
 </html>
+{% endblock %}
