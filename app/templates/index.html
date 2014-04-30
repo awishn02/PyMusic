@@ -34,13 +34,13 @@
   </head>
   <body>
     <div id="song-app">
+      {% if not user %}
+      <div class="login-modal">
+        {% include 'login.html' %}
+      </div>
+      {% endif %}
       <div class="navbar">
         <div class="navbar-top">
-          {% if user %}
-            <a href="/logout">Logout</a>
-          {% else %}
-            <a href="/login">Login</a>
-          {% endif %}
         </div>
         <div class="navbar-bottom">
           <div class="menu-wrapper">
@@ -53,6 +53,11 @@
             <a class="pause"><img src="static/images/pause.png"/></a>
             <a class="next"><img src="static/images/next.png"/></a>
           </div>
+          {% if user %}
+            <a class="log" href="/logout">Logout</a>
+          {% else %}
+            <a class="log login" href="/login">Login</a>
+          {% endif %}
         </div>
       </div>
 
@@ -61,9 +66,9 @@
           <input id="search-feeds" type="text" class="hidden" />
           <ul id="feed-list"></ul>
           {% if user %}
-          <div id="edit-feed" data-user_id="{{user.id}}">
-            <a class="edit"><img src="static/images/pencil.png"/></a>
-          </div>
+            <div id="edit-feed" data-user_id="{{user.id}}">
+              <a class="edit"><img src="static/images/pencil.png"/></a>
+            </div>
           {% endif %}
         </div>
         <div class="songs">
@@ -75,6 +80,7 @@
     <script type="text/template" id="song-template">
       <div class="view" data-song_id="<%= song_id %>" data-player_id="<%= player_id %>">
         <p><%= title %></p>
+        <button class="download">Download</button>
       </div>
     </script>
     <script type="text/template" id="feed-template">

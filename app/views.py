@@ -38,7 +38,8 @@ def tryConnection (applyfun):
 def index():
   if current_user is not None and current_user.is_authenticated():
     return render_template("index.html", user=current_user)
-  return render_template("index.html")
+  form = LoginForm()
+  return render_template("index.html", form=form)
 
 @lm.user_loader
 def load_user(userid):
@@ -53,22 +54,20 @@ def load_token(token):
     return user
   return None
 
-@app.route('/login', methods=['GET','POST'])
+@app.route('/login', methods=['POST'])
 def login():
   if current_user is not None and current_user.is_authenticated():
-    return redirect('/')
-  form = LoginForm()
-  if form.validate_on_submit():
-    email = form.email.data
-    password = form.password.data
-    user = tryConnection(lambda: models.User.query.filter_by(email=email).first())
-    if user is None:
-      return redirect("/login?error=0")
-    if not bcrypt.check_password_hash(user.password, password):
-      return redirect("/login?error=1")
-    login_user(user, remember=form.remember_me.data)
-    return redirect('/')
-  return render_template('login.html',form=form,action='login')
+    return "already_logged_in"
+  email = request.args.get('email')
+  password = request.args.get('password')
+  remember_me = request.args.get('remember_me')
+  user = tryConnection(lambda: models.User.query.filter_by(email=email).first())
+  if user is None:
+    return "NO_USER"
+  if not bcrypt.check_password_hash(user.password, password):
+    return "WRONG_PASS"
+  login_user(user, remember=remember_me)
+  return "SUCCESS"
 
 @app.route('/register', methods=['GET','POST'])
 def register():

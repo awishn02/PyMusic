@@ -1,5 +1,7 @@
 SOUNDCLOUD = 0
 YOUTUBE = 1
+SOUNDCLOUD_CIENT_ID = "cc4c6047b842cbb29c40f65c1855d56e"
+
 $(function(){
   var Feed = Backbone.Model.extend();
 
@@ -68,7 +70,8 @@ $(function(){
       return this;
     },
     events: {
-      "click .view" : "playSong"
+      "click .view" : "playSong",
+      "click .download" : "downloadSong"
     },
     playSong: function(){
       $("#song-list li").removeClass('playing');
@@ -86,6 +89,23 @@ $(function(){
     playPrev: function(){
       this.$el.removeClass('playing');
       this.$el.prev().find('.view').click();
+    },
+    downloadSong: function(e){
+      e.stopPropagation();
+      var div = this.$el.find('.view');
+      var player_id = div.data('player_id');
+      var song_id = div.data('song_id');
+      if(player_id == SOUNDCLOUD){
+        $.ajax({
+          url: "http://api.soundcloud.com/tracks/"+song_id+".json?client_id="+SOUNDCLOUD_CIENT_ID,
+          success:function(r,s,x){
+            url = r.permalink_url;
+            $.ajax({
+              url: "http://soundcloud-download.com/?sound="+url
+            })
+          }
+        })
+      }
     }
   });
 
@@ -104,7 +124,9 @@ $(function(){
       "click .previous" : "previous",
       "click .edit"     : "edit",
       "keyup #search-feeds" : "search",
-      "click .bookmark" : "bookmark"
+      "click .bookmark" : "bookmark",
+      "click .login"    : "showLogin",
+      "submit #login"   : "login"
     },
     addOne: function(song){
       var view = new SongView({model:song});
@@ -153,7 +175,6 @@ $(function(){
     },
     bookmark: function(e){
       $(e.target).toggleClass('bookmarked');
-      console.log(e.target);
       var feed_id = $(e.target).parent().parent().data('feed_id');
       var user_id = $("#edit-feed").data('user_id');
       $.ajax({
@@ -161,6 +182,20 @@ $(function(){
         type: 'POST'
       });
     },
+    showLogin: function(e){
+      $(".login-modal").toggleClass('show');
+      e.preventDefault();
+    },
+    login: function(e){
+      var email = $("#email").val();
+      var pass = $("#password").val();
+      var remember = $("#remember_me").val();
+      $.ajax({
+        url: '/login?email='+email+'&password='+pass+'&remember_me='+remember,
+        type: 'POST',
+      });
+      e.preventDefault();
+    }
   });
 
   var searchTimer = null;
@@ -180,8 +215,6 @@ $(function(){
     $(".navbar").toggleClass('active');
     $("#search-feeds").addClass('hidden');
     $("#feed-list").removeClass('editing');
-    $("#search-feeds").hide();
-    setTimeout(function(){ $('#search-feeds').show()},400);
   })
 
   player.seeker = $('.seeker');
@@ -199,7 +232,7 @@ var curSongItem = null;
 
 JsPlayer = function(){
   SC.initialize({
-    client_id: "cc4c6047b842cbb29c40f65c1855d56e"
+    client_id: SOUNDCLOUD_CIENT_ID
   });
 
 }
