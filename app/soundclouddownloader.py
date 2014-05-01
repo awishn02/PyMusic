@@ -32,7 +32,7 @@ class SoundCloudDownload:
                         tracks = [r.json()]
                 for track in tracks:
                         waveform_url = track['waveform_url']
-                        self.titleList.append(self.getTitleFilename(track['title']))
+                        self.titleList.append(self.getTitleFilename(track['title'].replace(" ","-")))
                         regex = re.compile("\/([a-zA-Z0-9]+)_")
                         r = regex.search(waveform_url)
                         stream_id = r.groups()[0]

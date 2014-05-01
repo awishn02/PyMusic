@@ -4,7 +4,7 @@ import datetime, time, urllib, urllib2, httplib2, json, re, feedparser, sys, tra
 import flask
 from soundclouddownloader import SoundCloudDownload
 from flaskext.bcrypt import Bcrypt
-from flask import Flask,redirect,request,render_template, g, Response, send_file
+from flask import Flask,redirect,request,render_template, g, Response, send_file, make_response
 from parser import parse_feed
 from feed_to_json import json_handle
 from sqlalchemy.exc import IntegrityError
@@ -96,13 +96,22 @@ def scdownload():
   download = SoundCloudDownload(url, False, False)
   f = download.downloadSongs()
   filename = "/static/"+f.split('/')[2]
-  r = Response(filename,
-               mimetype="audio/mpeg",
-               headers={
-                "Set-Cookie":"fileDownload=true;path=/",
-                "Content-type":"audio/mpeg",
-                "Content-Disposition": "attachment; filename="+filename})
-  return r
+  # s = open(filename,"rb")
+  # response = make_response(s.read())
+  # response.headers['Content-Disposition'] = "attachment; filename="+f.split('/')[2]
+  # response.headers['Content-type'] = "application-octet-stream"
+  # response.mimetype = "audio/mp3"
+  # response = HttpResponse()
+  # r = Response(s.read(),
+  #              mimetype="audio/mp3",
+  #              headers={
+  #               "Set-Cookie":"fileDownload=true;path=/",
+  #               "Content-type":"audio/mp3",
+  #               "Content-type":"application/force-download",
+  #               "Content-type":"application/octet-stream",
+  #               "Content-type":"application/download",
+  #               "Content-Disposition": "attachment; filename="+f.split('/')[2]})
+  return filename
 
 
 

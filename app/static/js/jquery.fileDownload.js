@@ -261,15 +261,16 @@ $.extend({
             } else {
 
                 //create a temporary iframe that is used to request the fileUrl as a GET request
-                var pom = document.createElement('a');
-                var text = 'test';
-                pom.setAttribute('href', 'data:text/plain;charset=utf-8,' + encodeURIComponent(text));
-                pom.setAttribute('download', fileUrl.replace("/static/",""));
-                pom.click();
-                // $iframe = $("<iframe>")
-                //     .hide()
-                //     .prop("src", fileUrl)
-                //     .appendTo("body");
+                // var pom = document.createElement('a');
+                // var text = 'test';
+                // pom.setAttribute('href', 'data:audio/mpeg;charset=utf-8,' + encodeURIComponent(text));
+                // pom.setAttribute('download', fileUrl);
+                // pom.click();
+                // pom.remove();
+                $iframe = $("<iframe>")
+                    .hide()
+                    .prop("src", fileUrl)
+                    .appendTo("body");
             }
 
         } else {

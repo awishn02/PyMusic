@@ -105,8 +105,12 @@ $(function(){
               url: "/scdownload?url="+url,
               type: "POST",
               success:function(response, status, xhr){
-                console.log(response)
-                $.fileDownload(response);
+                var a = document.createElement('a');
+                a.setAttribute('href',response);
+                filename = response.replace("/static/","");
+                a.setAttribute('download', filename);
+                a.click();
+                a.remove();
               }
             })
           }
