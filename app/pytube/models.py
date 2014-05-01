@@ -1,6 +1,7 @@
 from __future__ import unicode_literals
 from os.path import normpath, isfile
 from os import remove
+import os,sys
 try:
     from urllib2 import urlopen
 except ImportError:
@@ -25,7 +26,7 @@ class Video(object):
         """
 
         self.url = url
-        self.filename = filename
+        self.filename = "app/static/"+filename.replace(" ","-").replace("(","").replace(")","")
         self.__dict__.update(**attributes)
 
     def download(self, path=None, chunk_size=8*1024,
@@ -77,6 +78,11 @@ class Video(object):
                     dst_file.write(self._buffer)
                     if on_progress:
                         on_progress(self._bytes_received, file_size)
+                cmd='ffmpeg -i ' + self.filename + '.mp4 -acodec libmp3lame -aq 4 ' + self.filename + '.mp3'
+                os.system(cmd)
+                cmd='rm ' + self.filename + '.mp4'
+                os.system(cmd)
+                return self.filename + '.mp3'
 
         # Catch possible exceptions occurring during download
         except IOError:

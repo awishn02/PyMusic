@@ -12,6 +12,7 @@ from sqlalchemy import desc
 from forms import FeedForm, LoginForm
 from flask.ext.login import login_user, logout_user, current_user, login_required
 from database import db_session
+from pytube import YouTube
 bcrypt = Bcrypt(app)
 feedparser.SANITIZE_HTML = False
 
@@ -96,23 +97,15 @@ def scdownload():
   download = SoundCloudDownload(url, False, False)
   f = download.downloadSongs()
   filename = "/static/"+f.split('/')[2]
-  # s = open(filename,"rb")
-  # response = make_response(s.read())
-  # response.headers['Content-Disposition'] = "attachment; filename="+f.split('/')[2]
-  # response.headers['Content-type'] = "application-octet-stream"
-  # response.mimetype = "audio/mp3"
-  # response = HttpResponse()
-  # r = Response(s.read(),
-  #              mimetype="audio/mp3",
-  #              headers={
-  #               "Set-Cookie":"fileDownload=true;path=/",
-  #               "Content-type":"audio/mp3",
-  #               "Content-type":"application/force-download",
-  #               "Content-type":"application/octet-stream",
-  #               "Content-type":"application/download",
-  #               "Content-Disposition": "attachment; filename="+f.split('/')[2]})
   return filename
 
+@app.route('/ytdownload', methods=['POST'])
+def ytdownload():
+  url = request.args.get('url')
+  yt = YouTube()
+  yt.url = url
+  video = yt.filter('mp4')[0]
+  return "/static/"+video.download().split('/')[2]
 
 
 #################

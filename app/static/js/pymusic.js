@@ -115,6 +115,20 @@ $(function(){
             })
           }
         })
+      }else if(player_id == YOUTUBE){
+        url = " http://www.youtube.com/watch?v="+song_id;
+        $.ajax({
+          url:'/ytdownload?url='+url,
+          type: "POST",
+          success:function(response, status, xhr){
+            var a = document.createElement('a');
+            a.setAttribute('href',response);
+            filename = response.replace("/static/","");
+            a.setAttribute('download', filename);
+            a.click();
+            a.remove();
+          }
+        })
       }
     }
   });
