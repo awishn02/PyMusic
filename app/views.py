@@ -2,8 +2,9 @@ from pprint import pprint
 from app import app, models, lm, login_serializer, bcrypt
 import datetime, time, urllib, urllib2, httplib2, json, re, feedparser, sys, traceback
 import flask
+from soundclouddownloader import SoundCloudDownload
 from flaskext.bcrypt import Bcrypt
-from flask import Flask,redirect,request,render_template, g
+from flask import Flask,redirect,request,render_template, g, Response, send_file
 from parser import parse_feed
 from feed_to_json import json_handle
 from sqlalchemy.exc import IntegrityError
@@ -89,6 +90,19 @@ def logout():
   logout_user()
   return redirect("/")
 
+@app.route('/scdownload', methods=['POST'])
+def scdownload():
+  url = request.args.get('url')
+  download = SoundCloudDownload(url, False, False)
+  f = download.downloadSongs()
+  filename = "/static/"+f.split('/')[2]
+  r = Response(filename,
+               mimetype="audio/mpeg",
+               headers={
+                "Set-Cookie":"fileDownload=true;path=/",
+                "Content-type":"audio/mpeg",
+                "Content-Disposition": "attachment; filename="+filename})
+  return r
 
 
 

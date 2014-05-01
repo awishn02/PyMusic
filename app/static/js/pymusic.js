@@ -92,6 +92,7 @@ $(function(){
     },
     downloadSong: function(e){
       e.stopPropagation();
+      e.preventDefault();
       var div = this.$el.find('.view');
       var player_id = div.data('player_id');
       var song_id = div.data('song_id');
@@ -101,7 +102,12 @@ $(function(){
           success:function(r,s,x){
             url = r.permalink_url;
             $.ajax({
-              url: "http://soundcloud-download.com/?sound="+url
+              url: "/scdownload?url="+url,
+              type: "POST",
+              success:function(response, status, xhr){
+                console.log(response)
+                $.fileDownload(response);
+              }
             })
           }
         })
