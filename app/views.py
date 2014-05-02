@@ -121,8 +121,8 @@ def posts():
       url = feed.url
       data = parse_feed(url)
       for d in data:
+        print d
         s = models.Song.query.filter_by(song_id=d['song_id']).first()
-        print s
         if s is None:
           song = models.Song(title=d['title'], player_id=d['player_id'],
               song_id=d['song_id'], feed_id=feed.id, pub_date=d['pub_date'])
@@ -132,7 +132,7 @@ def posts():
   except IntegrityError as e:
     pass
   except Exception as e:
-    return str(e)
+    return "Error: " + str(e)
 
 @app.route('/songs', methods=['GET'])
 def songs():

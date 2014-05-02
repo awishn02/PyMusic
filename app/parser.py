@@ -27,7 +27,7 @@ def parse_feed(url):
       youtube_id = entry.content[0].value.split('embed/')[1].split('?')[0].split('"')[0]
       obj['song_id'] = youtube_id
       obj['pub_date'] = entry.published;
-    if obj != {}:
+    if obj != {} and 'song_id' in obj:
       objs.append(obj)
   return objs
 
