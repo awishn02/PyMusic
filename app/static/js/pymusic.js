@@ -116,7 +116,7 @@ $(function(){
           }
         })
       }else if(player_id == YOUTUBE){
-        url = " http://www.youtube.com/watch?v="+song_id;
+        url = "http://www.youtube.com/watch?v="+song_id;
         $.ajax({
           url:'/ytdownload?url='+url,
           type: "POST",
