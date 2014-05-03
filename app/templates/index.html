@@ -81,9 +81,11 @@
     <script type="text/template" id="song-template">
       <div class="view" data-song_id="<%= song_id %>" data-player_id="<%= player_id %>">
         <p><%= title %></p>
+        <% if (player_id == 0) { %>
         <div id="progress-button" class="progress-button download">
           <button><span>Download</span></button>
         </div>
+        <% } %>
       </div>
     </script>
     <script type="text/template" id="feed-template">

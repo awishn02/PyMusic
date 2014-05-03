@@ -117,11 +117,9 @@ def posts():
   try:
     feeds = models.Feed.query.all()
     for feed in feeds:
-      print feed.url
       url = feed.url
       data = parse_feed(url)
       for d in data:
-        print d
         s = models.Song.query.filter_by(song_id=d['song_id']).first()
         if s is None:
           song = models.Song(title=d['title'], player_id=d['player_id'],
