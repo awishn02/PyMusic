@@ -10,28 +10,32 @@ def parse_feed(url):
   objs = []
   for entry in feed.entries:
     obj = {}
-    if "soundcloud" in entry.content[0].value and "iframe" in entry.content[0].value:
-      match = re.search(r'tracks%2F(.*?)&amp;', entry.content[0].value)
-      obj['player_id'] = SOUNDCLOUD
-      obj['title'] = entry.title
-      obj['pub_date'] = entry.published;
-      if match:
-        obj['song_id'] = match.group(1).split('/')[0]
-      else:
-        match = re.search(r'tracks/(.*?)&', entry.content[0].value)
+    if entry.content is not None and entry.content[0] is not None:
+      if "soundcloud" in entry.content[0].value and "iframe" in entry.content[0].value:
+        match = re.search(r'tracks%2F(.*?)&amp;', entry.content[0].value)
+        obj['player_id'] = SOUNDCLOUD
+        obj['title'] = entry.title
+        obj['pub_date'] = entry.published;
         if match:
           obj['song_id'] = match.group(1).split('/')[0]
-    elif "youtube" in entry.content[0].value:
-      obj['player_id'] = YOUTUBE
-      obj['title'] = entry.title
-      youtube_id = entry.content[0].value.split('embed/')[1].split('?')[0].split('"')[0]
-      obj['song_id'] = youtube_id
-      obj['pub_date'] = entry.published;
-    if obj != {} and 'song_id' in obj:
-      objs.append(obj)
+        else:
+          match = re.search(r'tracks/(.*?)&', entry.content[0].value)
+          if match:
+            obj['song_id'] = match.group(1).split('/')[0]
+      elif "youtube" in entry.content[0].value:
+        obj['player_id'] = YOUTUBE
+        obj['title'] = entry.title
+        if "embed" in entry.content[0].value:
+          youtube_id = entry.content[0].value.split('embed/')[1].split('?')[0].split('"')[0]
+        else:
+          youtube_id = re.search(r'v=(.*?)">',entry.content[0].value).group(1)
+        obj['song_id'] = youtube_id
+        obj['pub_date'] = entry.published;
+      if obj != {} and 'song_id' in obj:
+        objs.append(obj)
   return objs
 
 
 if __name__ == "__main__":
-  url = "http://freshnewtracks.com/feed" 
+  url = "http://thekollection.com/feed/" 
   parse_feed(url)
