@@ -36,6 +36,8 @@
   <body>
     <div id="song-app">
       {% if not user %}
+      <div class="modal-wrapper">
+      </div>
       <div class="login-modal">
         {% include 'login.html' %}
       </div>
@@ -49,10 +51,44 @@
           </div>
           <div class="seeker"><div class="position"></div></div>
           <div class="controls">
-            <a class="previous"><img src="static/images/previous.png"/></a>
-            <a class="play"><img src="static/images/play.png"/></a>
-            <a class="pause"><img src="static/images/pause.png"/></a>
-            <a class="next"><img src="static/images/next.png"/></a>
+            <a class="previous">
+              {# <img src="static/images/previous.png"/> #}
+              <svg width="20" height="28" xmlns="http://www.w3.org/2000/svg">
+                <g id="svg_20">
+                  <path stroke="#000000" transform="rotate(-90 7.41667 12.4167)" id="svg_15" d="m-0.583328,19.083401l8,-13.333401l8,13.333401l-16,0z" stroke-opacity="null" stroke-width="1.5" fill="#000000"/>
+                  <path stroke="#000000" transform="rotate(-90 15.0837 12.4167)" id="svg_16" d="m7.083679,19.083399l8,-13.333399l8,13.333399l-16,0z" stroke-opacity="null" stroke-width="1.5" fill="#000000"/>
+                  <rect stroke="#000000" id="svg_17" height="17" width="2" y="5" x="0.000006" stroke-width="1.5" fill="#000"/>
+                </g>
+              </svg>
+            </a>
+            <a class="play">
+              {# <img src="static/images/play.png"/> #}
+              <svg width="20" height="28" xmlns="http://www.w3.org/2000/svg">
+                <g>
+                  <path stroke="#000000" transform="rotate(90 8.75002 12.4167)" id="svg_10" d="m0.75,19.083336l7.999954,-13.333336l8.000076,13.333336l-16.000031,0z" stroke-opacity="null" stroke-width="1.5" fill="#000000"/>
+                </g>
+              </svg>
+            </a>
+            <a class="pause">
+              {# <img src="static/images/pause.png"/> #}
+              <svg width="20" height="30" xmlns="http://www.w3.org/2000/svg">
+               <!-- Created with Method Draw - http://github.com/duopixel/Method-Draw/ -->
+               <g>
+                <rect id="svg_1" height="17" width="5" y="6" stroke-width="1.5" stroke="#000000" fill="#000"/>
+                <rect id="svg_3" height="17" width="4" y="6" x="10" stroke-width="1.5" stroke="#000000" fill="#000"/>
+               </g>
+              </svg>
+            </a>
+            <a class="next">
+              {# <img src="static/images/next.png"/> #}
+              <svg width="22" height="28" xmlns="http://www.w3.org/2000/svg">
+                <g id="svg_19">
+                 <path stroke="#000000" transform="rotate(90 6.6667 12.4167)" id="svg_12" d="m-1.333298,19.083401l8,-13.333401l8,13.333401l-16,0z" stroke-opacity="null" stroke-width="1.5" fill="#000000"/>
+                 <path stroke="#000000" transform="rotate(90 14.3337 12.4167)" id="svg_13" d="m6.33371,19.083401l8,-13.333401l8,13.333401l-16,0z" stroke-opacity="null" stroke-width="1.5" fill="#000000"/>
+                 <rect stroke="#000000" id="svg_18" height="17" width="2" y="5" x="19.916704" stroke-width="1.5" fill="#000"/>
+                </g>
+              </svg>
+            </a>
           </div>
           {% if user %}
             <a class="log" href="/logout">Logout</a>
@@ -79,14 +115,23 @@
     </div>
     <div id="ytplayer"></div>
     <script type="text/template" id="song-template">
-      <div class="view" data-song_id="<%= song_id %>" data-player_id="<%= player_id %>">
+      <div class="view" data-song_id="<%= song_id %>" data-player_id="<%= player_id %>" data-id="<%= id %>">
         <p><%= title %></p>
-        <% if (player_id == 0) { %>
-        <div id="progress-button" class="progress-button download">
-          <button><span>Download</span></button>
-        </div>
-        <% } %>
-      </div>
+        {% if user %}
+          {% if user.user_type_id == 1 or user.user_type_id == 2 %}
+            <div id="progress-button" class="progress-button download">
+              <% if(player_id != 0) { %>
+                <button disabled><span>No Download</span></button>
+              <% } else { %>
+                <button><span>Download</span></button>
+              <% } %>
+              </div>
+              <div id="" class="progress-button dislike red small">
+                <button><span>X</span></button>
+              </div>
+            </div>
+          {% endif %}
+        {% endif %}
     </script>
     <script type="text/template" id="feed-template">
       <div class="view" data-feed_id="<%= id %>">

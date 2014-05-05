@@ -66,6 +66,18 @@ input:focus {
   width: 0;
 }
 
+.controls a {
+  margin-right: 4px;
+}
+
+.controls a:hover svg rect,
+.controls a:hover svg path,
+.controls a.active svg path,
+.controls a.active svg rect{
+  fill: white;
+  stroke: white;
+}
+
 /*Hide youtube player outside of screen */
 object {
   position: fixed;
@@ -99,19 +111,93 @@ object {
 /***********************
  * Login Modal
  * *********************/
+.no-scroll {
+  overflow-y: hidden;
+}
+
 .login-modal {
-  height: 400px;
+  height: 200px;
   width: 400px;
-  position: absolute;
+  position: fixed;
   top: -400px;
+  left: 50%;
+  margin-left: -200px;
   -webkit-transition: top .5s;
   -moz-transition: top .5s;
   transition: top .5s;
   z-index: 15;
+  background-color: #e74c3c;
+  z-index: 20;
 }
 
 .login-modal.show {
   top: 200px;
+}
+
+.modal-wrapper {
+  z-index: 10;
+  top: -100%;
+  background-color: black;
+  position: fixed;
+  width: 100%;
+  height: 100%;
+  -webkit-transition: opacity .3s, top 0s;
+  -moz-transition: opacity .3s, top 0s;
+  transition: opacity .3s, top 0s;
+  opacity: 0;
+}
+
+.modal-wrapper.show {
+  top: 0;
+  opacity: .5;
+  cursor: pointer;
+}
+
+#login input[type=text],
+#login input[type=password]{
+  border: none;
+  background-color: white;
+  -webkit-appearance: none;
+  width: 80%;
+  display: block;
+  height: 25px;
+  font-size: 16px;
+  font-family: 'Lato-light';
+}
+
+#login p {
+  margin-left: 10%;
+  margin-top: 20px;
+  font-size: 18px;
+}
+
+#login #remember {
+  display: inline;
+}
+
+#login #pass {
+  margin-bottom: 20px;
+}
+
+#login p input[type=submit] {
+  display: inline;
+  background-color: #2980b9;
+  -webkit-appearance: none;
+  border: none;
+  height: 25px;
+  margin-left: 10px;
+  width: 80px;
+  cursor: pointer;
+  font-size: 16px;
+  font-family: 'Lato-light';
+}
+
+#login input[type=submit]:hover {
+  background-color: #3A539B;
+}
+
+#login a {
+  text-decoration: none;
 }
 
 /***********************
@@ -122,6 +208,9 @@ object {
   position: absolute;
   top: 40px;
   width: 100%;
+  height: calc(100% - 40px);
+  height: -moz-calc(100% - 40px);
+  height: -webkit-calc(100% - 40px);
 }
 
 .feeds {
@@ -184,6 +273,7 @@ object {
   font-size: 20px;
   font-family: 'Lato-light';
   -webkit-transition: height .3s;
+  -moz-transition: height .3s;
   transition: height .3s;
   margin-top: 0;
   border: none;
@@ -267,6 +357,11 @@ object {
   float: right;
   margin-top: -25px;
   cursor: pointer;
+  margin-right: 20px;
+}
+
+.progress-button.small button{
+  width: 35px;
 }
 
 .progress-button button {
@@ -287,13 +382,26 @@ object {
     transition: background-color 0.3s, color 0.3s, width 0.3s, border-width 0.3s, border-color 0.3s;
 }
 
+.progress-button.red button{
+  border: 2px solid #e74c3c;
+  color: #e74c3c 
+}
+
 .progress-button button:hover {
     background-color: #1ECD97;
     color: #fff;
 }
 
+.progress-button.red button:hover {
+  background-color: #e74c3c;
+  color: #fff;
+}
+
 .progress-button button:focus {
     outline: none;
+}
+
+.progress-button button:disabled {
 }
 
 .progress-button svg {

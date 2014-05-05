@@ -5,9 +5,17 @@ from sqlalchemy import Column, Integer, String, ForeignKey, DateTime, Table
 from sqlalchemy.orm import relationship
 from app import login_serializer
 
+USER = 0
+DOWNLOADER = 1
+ADMIN = 2
+
 users_has_feeds = Table('users_has_feeds', Base.metadata,
                           Column('users_id', Integer, ForeignKey('users.id')),
                           Column('feeds_id', Integer, ForeignKey('feeds.id')))
+
+users_dislikes_songs = Table('users_dislikes_songs', Base.metadata,
+                              Column('users_id', Integer, ForeignKey('users.id')),
+                              Column('songs_id', Integer, ForeignKey('songs.id')))
 
 
 class Feed(Base):
@@ -47,6 +55,8 @@ class User(Base):
   email = Column(String(255), unique=True)
   password = Column(String(255))
   feeds = relationship('Feed', secondary=users_has_feeds,backref='users', lazy='dynamic')
+  dislikes = relationship('Song', secondary=users_dislikes_songs, backref='users', lazy='dynamic')
+  user_type_id = Column(Integer, default=USER)
 
   def is_authenticated(self):
     return True

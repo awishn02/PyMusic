@@ -8,7 +8,7 @@ from flask import Flask,redirect,request,render_template, g, Response, send_file
 from parser import parse_feed
 from feed_to_json import json_handle
 from sqlalchemy.exc import IntegrityError
-from sqlalchemy import desc
+from sqlalchemy import desc, and_
 from forms import FeedForm, LoginForm
 from flask.ext.login import login_user, logout_user, current_user, login_required
 from database import db_session
@@ -71,20 +71,18 @@ def login():
   login_user(user, remember=remember_me)
   return "SUCCESS"
 
-@app.route('/register', methods=['GET','POST'])
+@app.route('/register', methods=['POST'])
 def register():
   if current_user is not None and current_user.is_authenticated():
-    return redirect('/')
-  form = LoginForm()
-  if form.validate_on_submit():
-    email = form.email.data
-    password = form.password.data
-    user = models.User(email=email, password=bcrypt.generate_password_hash(password))
-    db_session.add(user)
-    db_session.commit()
-    login_user(user, remember=form.remember_me.data)
-    return redirect('/')
-  return render_template('login.html',form=form,action='register')
+    return "already_logged_in"
+  email = request.args.get('email')
+  password = request.args.get('password')
+  remember_me = request.args.get('remember_me')
+  user = models.User(email=email, password=bcrypt.generate_password_hash(password))
+  db_session.add(user)
+  db_session.commit()
+  login_user(user, remember=remember_me)
+  return "SUCCESS"
 
 @app.route('/logout')
 def logout():
@@ -135,10 +133,18 @@ def posts():
 @app.route('/songs', methods=['GET'])
 def songs():
   feed_id = request.args.get('feed_id')
-  if feed_id is not None:
-    songs = models.Song.query.filter_by(disliked=0,feed_id=feed_id).order_by(desc(models.Song.pub_date)).all()
+  if current_user is not None and current_user.is_authenticated():
+    dislikes = current_user.dislikes
+    no_include = and_( *[models.Song.id != x.id for x in dislikes])
+    if feed_id is not None:
+      songs = models.Song.query.filter_by(disliked=0,feed_id=feed_id).filter(no_include).order_by(desc(models.Song.pub_date)).all()
+    else:
+      songs = models.Song.query.filter_by(disliked=0).filter(no_include).order_by(desc(models.Song.pub_date)).all()
   else:
-    songs = models.Song.query.filter_by(disliked=0).order_by(desc(models.Song.pub_date)).all()
+    if feed_id is not None:
+      songs = models.Song.query.filter_by(disliked=0,feed_id=feed_id).order_by(desc(models.Song.pub_date)).all()
+    else:
+      songs = models.Song.query.filter_by(disliked=0).order_by(desc(models.Song.pub_date)).all()
   return json.dumps(to_json_list(songs))
 
 @app.route('/delete_songs', methods=['GET'])
@@ -193,3 +199,20 @@ def favorite():
   except Exception, err:
     print traceback.format_exc()
     return json.dumps({"success": False})
+
+@app.route('/dislike', methods=['POST'])
+@login_required
+def dislike():
+  try:
+    user_id = request.args.get('user_id')
+    song_id = request.args.get('song_id')
+    user = models.User.query.get(user_id)
+    song = models.Song.query.get(song_id)
+    if song is not None:
+      if not db_session.query(models.users_dislikes_songs).filter_by(users_id=user_id,songs_id=song_id).first():
+        user.dislikes.append(song)
+        db_session.commit()
+      return json.dumps({"success":True})
+  except Exception, err:
+    print err
+    return json.dumps({"success":False})

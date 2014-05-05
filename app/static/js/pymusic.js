@@ -71,7 +71,8 @@ $(function(){
     },
     events: {
       "click .view" : "playSong",
-      "click .download" : "downloadSong"
+      "click .download" : "downloadSong",
+      "click .dislike" : "dislikeSong"
     },
     playSong: function(){
       $("#song-list li").removeClass('playing');
@@ -81,6 +82,7 @@ $(function(){
       var song_id = div.data('song_id');
       player.playSong(song_id, player_id);
       this.$el.addClass('playing');
+      $(".play").addClass('active');
     },
     playNext: function(){
       this.$el.removeClass('playing');
@@ -89,6 +91,23 @@ $(function(){
     playPrev: function(){
       this.$el.removeClass('playing');
       this.$el.prev().find('.view').click();
+    },
+    dislikeSong: function(e){
+      e.stopPropagation();
+      e.preventDefault();
+      var elmt = this.$el;
+      var div = this.$el.find('.view');
+      var song_id = div.data('id');
+      var user_id = $("#edit-feed").data('user_id');
+      $.ajax({
+        url: "/dislike?user_id="+user_id+"&song_id="+song_id,
+        type: "POST",
+        success: function(){
+          elmt.fadeToggle("fast",function(){
+            elmt.remove();
+          });
+        }
+      })
     },
     downloadSong: function(e){
       e.stopPropagation();
@@ -138,6 +157,7 @@ $(function(){
     initialize: function(){
       this.listenTo(Songs, 'reset', this.addAll);
       this.listenTo(Feeds, 'reset', this.populateFeedList);
+      this.loginAction = "login";
       Feeds.fetch({reset:true});
       Songs.fetch({reset:true});
     },
@@ -149,8 +169,10 @@ $(function(){
       "click .edit"     : "edit",
       "keyup #search-feeds" : "search",
       "click .bookmark" : "bookmark",
-      "click .login"    : "showLogin",
-      "submit #login"   : "login"
+      "click .login"    : "toggleLogin",
+      "submit #login"   : "login",
+      "click .modal-wrapper.show" : "toggleLogin",
+      "click #register" : "toggleRegister"
     },
     addOne: function(song){
       var view = new SongView({model:song});
@@ -165,9 +187,13 @@ $(function(){
       this.$("#feed-list").append(view.render().el);
     },
     pause: function(){
+      $(".controls a").removeClass('active');
+      $(".pause").addClass('active');
       player.pause();
     },
     play: function(){
+      $(".controls a").removeClass('active');
+      $(".play").addClass('active');
       player.resume();
     },
     next: function(){
@@ -206,19 +232,43 @@ $(function(){
         type: 'POST'
       });
     },
-    showLogin: function(e){
+    toggleLogin: function(e){
       $(".login-modal").toggleClass('show');
+      $(".modal-wrapper").toggleClass('show');
+      $(".content").toggleClass('no-scroll');
       e.preventDefault();
+    },
+    toggleRegister: function(e){
+      if(this.loginAction == "login"){
+        this.loginAction = "register";
+        $("#register").text('Login');
+      }else{
+        this.loginAction = "login";
+        $("#register").text('Register');
+      }
     },
     login: function(e){
       var email = $("#email").val();
       var pass = $("#password").val();
       var remember = $("#remember_me").val();
+      var o = this;
+      var hold = e;
+      if(this.loginAction == "login"){
+        url = '/login?email='+email+'&password='+pass+'&remember_me='+remember;
+      }else {
+        url = '/register?email='+email+'&password='+pass+'&remember_me='+remember
+      }
       $.ajax({
-        url: '/login?email='+email+'&password='+pass+'&remember_me='+remember,
+        url: url,
         type: 'POST',
+        success: function(){
+          // o.toggleLogin();
+          // Songs.fetch({reset:true});
+          // Feeds.fetch({reset:true});
+          window.location.reload();
+        }
       });
-      e.preventDefault();
+      hold.preventDefault();
     }
   });
 

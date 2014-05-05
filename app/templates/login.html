@@ -1,20 +1,16 @@
 {% block content %}
-{% if action == "login" %}
-<h1>Login</h1>
-{% else %}
-<h1>Register</h1>
-{% endif %}
 <form action="" method="post" name="login" id="login">
   {{form.hidden_tag()}}
   <p>
     Email: {{form.email(size=80)}}
   </p>
-  <p>
+  <p id="pass">
     Password: {{form.password(size=80)}}
   </p>
-  <p>
+  <p id="remember">
     Remember Me {{form.remember_me}}
+    <a href="javascript:void(0);" id="register">Register</a>
+    <input type="submit" value="Login">
   </p>
-  <p><input type="submit" value="Submit"></p>
 </form>
 {% endblock %}
