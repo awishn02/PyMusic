@@ -28,7 +28,7 @@ def parse_feed(url):
         if "embed" in entry.content[0].value:
           youtube_id = entry.content[0].value.split('embed/')[1].split('?')[0].split('"')[0]
         else:
-          match = re.search(r'v=(.*?)">',entry.content[0].value).group(1)
+          match = re.search(r'v=(.*?)">',entry.content[0].value)
           if match:
             youtube_id = match.group(1)
         if youtube_id:
