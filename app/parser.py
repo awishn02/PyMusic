@@ -28,8 +28,11 @@ def parse_feed(url):
         if "embed" in entry.content[0].value:
           youtube_id = entry.content[0].value.split('embed/')[1].split('?')[0].split('"')[0]
         else:
-          youtube_id = re.search(r'v=(.*?)">',entry.content[0].value).group(1)
-        obj['song_id'] = youtube_id
+          match = re.search(r'v=(.*?)">',entry.content[0].value).group(1)
+          if match:
+            youtube_id = match.group(1)
+        if youtube_id:
+          obj['song_id'] = youtube_id
         obj['pub_date'] = entry.published;
       if obj != {} and 'song_id' in obj:
         objs.append(obj)
