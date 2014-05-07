@@ -76,6 +76,7 @@ $(function(){
     },
     playSong: function(){
       $("#song-list li").removeClass('playing');
+      player.curTitle = this.$el.find('p').text();
       var div = this.$el.find('.view');
       player.curItemView = this;
       var player_id = div.data('player_id');
@@ -269,6 +270,7 @@ $(function(){
         }
       });
       hold.preventDefault();
+
     }
   });
 
@@ -300,6 +302,14 @@ $(function(){
     player.setSeekPosition(curtime/duration*100);
   }
 
+  window.onfocus = function(){
+    player.isActive = true;
+  }
+
+  window.onblur = function(){
+    player.isActive = false;
+  }
+
 });
 
 var curSongItem = null;
@@ -315,6 +325,9 @@ JsPlayer.prototype.setYTPlayer = function(){
   this.ytPlayer = $("#myytplayer");
 }
 JsPlayer.prototype.playSong = function(song_id, player_id){
+  if(window.webkitNotifications.checkPermission() == 1){
+    window.webkitNotifications.requestPermission();
+  }
   this.stop();
   this.curPlayer = player_id;
   if(player_id == SOUNDCLOUD){
@@ -323,9 +336,28 @@ JsPlayer.prototype.playSong = function(song_id, player_id){
     this.playYT(song_id)
   }
 }
+JsPlayer.prototype.isActive = true;
+JsPlayer.prototype.didSkip = false;
+JsPlayer.prototype.curTitle = "";
 JsPlayer.prototype.curSound = null;
 JsPlayer.prototype.curPlayer = null;
 JsPlayer.prototype.curItemView = null;
+JsPlayer.prototype.notify = function(){
+  var o = this;
+  if(window.webkitNotifications.checkPermission() == 0 && (this.isActive == false || this.didSkip == true)){
+    o.didSkip = false;
+    var notification = window.webkitNotifications.createNotification(
+      null,
+      'Pymusic',
+      o.curTitle + ' (Click to skip)'
+    );
+    notification.onclick = function(){
+      o.didSkip = true;
+      o.next();
+    }
+    notification.show();
+  }
+}
 JsPlayer.prototype.playSC = function(song_id){
   var o = this;
   SC.stream("/tracks/"+song_id, function(sound){
@@ -336,7 +368,7 @@ JsPlayer.prototype.playSC = function(song_id){
         o.setSeekPosition(width);
       },
       onfinish: function(){
-        o.curItemView.playNext();
+        o.next();
       }
     });
   });
@@ -384,6 +416,7 @@ JsPlayer.prototype.resume = function(){
 }
 JsPlayer.prototype.next = function(){
   this.curItemView.playNext();
+  this.notify();
 }
 JsPlayer.prototype.previous = function(){
   this.curItemView.playPrev();
