@@ -356,6 +356,9 @@ JsPlayer.prototype.notify = function(){
       o.didSkip = true;
       o.next();
     }
+    setTimeout(function(){
+      notification.cancel();
+    }, 3000);
   }
 }
 JsPlayer.prototype.playSC = function(song_id){
