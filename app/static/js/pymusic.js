@@ -307,12 +307,10 @@ $(function(){
   }
 
   window.onfocus = function(){
-    console.log('focus');
     player.isActive = true;
   }
 
   window.onblur = function(){
-    console.log('blur');
     player.isActive = false;
   }
 
@@ -331,8 +329,8 @@ JsPlayer.prototype.setYTPlayer = function(){
   this.ytPlayer = $("#myytplayer");
 }
 JsPlayer.prototype.playSong = function(song_id, player_id){
-  if(window.webkitNotifications.checkPermission() == 1){
-    window.webkitNotifications.requestPermission();
+  if(Notification.permission === "default"){
+    Notification.requestPermission();
   }
   this.stop();
   this.curPlayer = player_id;
@@ -351,19 +349,13 @@ JsPlayer.prototype.curItemView = null;
 JsPlayer.prototype.isLoading = false;
 JsPlayer.prototype.notify = function(){
   var o = this;
-  console.log(this.isActive);
-  if(window.webkitNotifications.checkPermission() == 0 && (this.isActive == false || this.didSkip == true)){
+  if(Notification.permission === "granted" && (this.isActive == false || this.didSkip == true)){
     o.didSkip = false;
-    var notification = window.webkitNotifications.createNotification(
-      null,
-      'Pymusic',
-      o.curTitle + ' (Click to skip)'
-    );
+    var notification = new Notification("PyMusic",{body: o.curTitle})
     notification.onclick = function(){
       o.didSkip = true;
       o.next();
     }
-    notification.show();
   }
 }
 JsPlayer.prototype.playSC = function(song_id){
