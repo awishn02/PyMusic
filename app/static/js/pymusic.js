@@ -75,15 +75,19 @@ $(function(){
       "click .dislike" : "dislikeSong"
     },
     playSong: function(){
-      $("#song-list li").removeClass('playing');
-      player.curTitle = this.$el.find('p').text();
-      var div = this.$el.find('.view');
-      player.curItemView = this;
-      var player_id = div.data('player_id');
-      var song_id = div.data('song_id');
-      player.playSong(song_id, player_id);
-      this.$el.addClass('playing');
-      $(".play").addClass('active');
+      if(player.isLoading == false){
+        player.isLoading = true;
+        $("#song-list li").removeClass('playing');
+        player.curTitle = this.$el.find('p').text();
+        $.scrollTo(this.$el.offset().top-40, 600);
+        var div = this.$el.find('.view');
+        player.curItemView = this;
+        var player_id = div.data('player_id');
+        var song_id = div.data('song_id');
+        player.playSong(song_id, player_id);
+        this.$el.addClass('playing');
+        $(".play").addClass('active');
+      }
     },
     playNext: function(){
       this.$el.removeClass('playing');
@@ -303,10 +307,12 @@ $(function(){
   }
 
   window.onfocus = function(){
+    console.log('focus');
     player.isActive = true;
   }
 
   window.onblur = function(){
+    console.log('blur');
     player.isActive = false;
   }
 
@@ -342,8 +348,10 @@ JsPlayer.prototype.curTitle = "";
 JsPlayer.prototype.curSound = null;
 JsPlayer.prototype.curPlayer = null;
 JsPlayer.prototype.curItemView = null;
+JsPlayer.prototype.isLoading = false;
 JsPlayer.prototype.notify = function(){
   var o = this;
+  console.log(this.isActive);
   if(window.webkitNotifications.checkPermission() == 0 && (this.isActive == false || this.didSkip == true)){
     o.didSkip = false;
     var notification = window.webkitNotifications.createNotification(
@@ -364,6 +372,7 @@ JsPlayer.prototype.playSC = function(song_id){
     o.curSound = sound;
     sound.play({
       whileplaying: function(){
+        o.isLoading = false;
         width = this.position / this.duration * 100;
         o.setSeekPosition(width);
       },
@@ -376,6 +385,7 @@ JsPlayer.prototype.playSC = function(song_id){
 JsPlayer.prototype.yt_seek_updater = null;
 JsPlayer.prototype.playYT = function(song_id){
   this.ytPlayer.loadVideoById(song_id);
+  this.isLoading = false;
   this.yt_seek_updater = setInterval(this.update_seeker, 500);
 }
 JsPlayer.prototype.update_seeker = null;JsPlayer.prototype.seeker = null;
