@@ -357,7 +357,7 @@ JsPlayer.prototype.notify = function(){
       o.next();
     }
     setTimeout(function(){
-      notification.cancel();
+      notification.close();
     }, 3000);
   }
 }
