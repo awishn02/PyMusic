@@ -108,6 +108,7 @@ $(function(){
         url: "/dislike?user_id="+user_id+"&song_id="+song_id,
         type: "POST",
         success: function(){
+          player.next();
           elmt.fadeToggle("fast",function(){
             elmt.remove();
           });
