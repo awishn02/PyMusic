@@ -16,6 +16,10 @@ from pytube import YouTube
 bcrypt = Bcrypt(app)
 feedparser.SANITIZE_HTML = False
 
+USER = 0
+DOWNLOADER = 1
+ADMIN = 2
+
 def to_json_list(results, is_query=False):
   output = []
   for result in results:
@@ -65,9 +69,9 @@ def login():
   remember_me = request.args.get('remember_me')
   user = tryConnection(lambda: models.User.query.filter_by(email=email).first())
   if user is None:
-    return "NO_USER"
+    return "ERROR"
   if not bcrypt.check_password_hash(user.password, password):
-    return "WRONG_PASS"
+    return "ERROR"
   login_user(user, remember=remember_me)
   return "SUCCESS"
 
@@ -83,6 +87,27 @@ def register():
   db_session.commit()
   login_user(user, remember=remember_me)
   return "SUCCESS"
+
+@app.route('/admin', methods=['GET'])
+@login_required
+def admin():
+  if current_user is not None and current_user.is_authenticated() and current_user.user_type_id == ADMIN:
+    return render_template("admin.html", user=current_user)
+  return redirect('/')
+
+@app.route('/get_songs', methods=['GET'])
+def get_songs():
+  if current_user is not None and current_user.is_authenticated() and current_user.user_type_id == ADMIN:
+    return render_template("songs.html", user=current_user)
+  return render_template('songs.html')
+
+@app.route('/users', methods=['GET'])
+@login_required
+def user_list():
+  if current_user is not None and current_user.is_authenticated() and current_user.user_type_id == ADMIN:
+    users = models.User.query.all()
+    return json.dumps(to_json_list(users))
+  return redirect('/')
 
 @app.route('/logout')
 def logout():

@@ -1,0 +1,15 @@
+#admin-container {
+  margin: 0;
+  width: 100%;
+  position: relative;
+}
+
+#admin-nav {
+  position: fixed;
+  width: 100%;
+  top: 0;
+  left: 0;
+  height: 70px;
+  background: #2980b9;
+}
+

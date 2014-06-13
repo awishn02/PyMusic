@@ -1,0 +1,14 @@
+<div class="songs-div">
+  <div class="feeds">
+    <input id="search-feeds" type="text" class="hidden" />
+    <ul id="feed-list"></ul>
+    {% if user %}
+    <div id="edit-feed" data-user_id="{{user.id}}">
+      <a class="edit"><img src="static/images/pencil.png"/></a>
+    </div>
+    {% endif %}
+  </div>
+  <div class="songs">
+    <ul id="song-list"></ul>
+  </div>
+</div>

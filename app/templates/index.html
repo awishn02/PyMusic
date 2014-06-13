@@ -39,6 +39,7 @@
       <div class="modal-wrapper">
       </div>
       <div class="login-modal">
+        <div class="login-error hide"><p>Invalid password or email</p></div>
         {% include 'login.html' %}
       </div>
       {% endif %}
@@ -92,6 +93,10 @@
           </div>
           {% if user %}
             <a class="log" href="/logout">Logout</a>
+            {% if user.user_type_id == 2 %}
+              <a class="log admin" href="javascript:void(0);">Admin</a>
+              <a class="log song_link hide" href="javascript:void(0);">Songs</a>
+            {% endif %}
           {% else %}
             <a class="log login" href="/login">Login</a>
           {% endif %}
@@ -99,18 +104,8 @@
       </div>
 
       <div class="content">
-        <div class="feeds">
-          <input id="search-feeds" type="text" class="hidden" />
-          <ul id="feed-list"></ul>
-          {% if user %}
-            <div id="edit-feed" data-user_id="{{user.id}}">
-              <a class="edit"><img src="static/images/pencil.png"/></a>
-            </div>
-          {% endif %}
-        </div>
-        <div class="songs">
-          <ul id="song-list"></ul>
-        </div>
+      </div>
+      <div class="admin-container">
       </div>
     </div>
     <div id="ytplayer"></div>
@@ -125,18 +120,18 @@
               <% } else { %>
                 <button><span>Download</span></button>
               <% } %>
-              </div>
-              <div id="" class="progress-button dislike red small">
-                <button><span>X</span></button>
-              </div>
             </div>
           {% endif %}
+          <div id="" class="progress-button dislike red small">
+            <button><span>X</span></button>
+          </div>
         {% endif %}
     </script>
     <script type="text/template" id="feed-template">
       <div class="view" data-feed_id="<%= id %>">
         <p><%= title %><a class="bookmark"></a></p>
       </div>
+    </script>
     </div>
   </body>
 </html>

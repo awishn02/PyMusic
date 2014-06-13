@@ -126,12 +126,30 @@ object {
   -moz-transition: top .5s;
   transition: top .5s;
   z-index: 15;
-  background-color: #e74c3c;
+  background-color: #1BBC9B;
   z-index: 20;
 }
 
 .login-modal.show {
   top: 200px;
+}
+
+.login-error {
+  position: absolute;
+  background-color: #e74c3c;
+  width: 100%;
+  height: 40px;
+  -webkit-transition: height .3s;
+  -moz-transition: height .3s;
+  transition: height .3s;
+}
+
+.login-error.hide {
+  height: 0px;
+}
+
+.login-error p {
+  padding: 10px;
 }
 
 .modal-wrapper {
@@ -312,7 +330,8 @@ object {
 
 .feeds .bookmark:hover,
 .feeds .bookmark:active,
-.feeds .bookmark.bookmarked {
+.feeds .bookmark.bookmarked,
+.feeds li.bookmarked .bookmark{
   background-image: url('../images/bookmark-active.png');
 }
 
@@ -490,4 +509,135 @@ object {
     -webkit-transition: background-color 0.3s, color 0.3s, width 0.3s cubic-bezier(0.6, 0, 0.75, 0.75), border-width 0.3s, border-color 0.3s;
     -webkit-transition: background-color 0.3s, color 0.3s, width 0.3s cubic-bezier(0.6, -0.6, 0.75, 0.75), border-width 0.3s, border-color 0.3s;
     transition: background-color 0.3s, color 0.3s, width 0.3s cubic-bezier(0.6, -0.6, 0.75, 0.75), border-width 0.3s, border-color 0.3s;
+}
+
+
+/************************
+ * Admin Page           *
+ * **********************/
+.sidebar {
+  position: fixed;
+  top: 40px;
+  left: 0;
+  width: 17%;
+  height: 100%;
+  background-color: rgb(50,50,50);
+}
+
+.sidebar-list {
+  width: 100%;
+}
+
+.sidebar-list li {
+  width: calc(100%-10px);
+  cursor: pointer;
+  color: white;
+}
+
+.sidebar-list li:hover,
+.sidebar-list li.active,
+.sidebar-div.active{
+  background-color: rgb(70,70,70);
+}
+
+.text {
+  display: inline-block;
+  line-height: 35px;
+  vertical-align: middle;
+}
+
+.sidebar-div {
+  width: 100%;
+  height: 100%;
+  display: block;
+  color: white;
+}
+
+.icon {
+  display: inline-block;
+  background-repeat: no-repeat;
+  height: 35px;
+  width: 35px;
+  vertical-align: middle;
+}
+
+.icon-home {
+  background: url('../images/appbar.home.png');
+  background-size: 35px 35px;
+}
+
+.icon-users {
+  background: url('../images/appbar.group.png');
+  background-size: 35px 35px;
+}
+
+.admin-container {
+  position: relative;
+  top: 40px;
+  width: 100%;
+  height: 100%;
+}
+
+.admin-content {
+  position: absolute;
+  left: 17%;
+  width: 83%;
+  height: 1000px;
+  background-color: white;
+
+  -webkit-transition: all .3s ease-in-out;
+  -moz-transition: all .3s ease-in-out;
+  transition: all .3s ease-in-out;
+}
+
+.admin-content.small-sidebar {
+  width: calc(100% - 38px);
+  left: 38px;
+}
+
+.admin-content h1 {
+  font-size: 40px;
+  margin-left: 20px;
+  margin-top: 20px;
+  color: rgb(120,120,120);
+}
+
+.admin-content > div {
+  display: none;
+}
+
+.admin-content > div.active {
+  display: block;
+}
+
+.dash-item {
+  width: 20%;
+  margin: 20px 20px;
+  display: inline-block;
+}
+
+.dash-item h3 {
+  font-size: 30px;
+  color: white;
+  padding: 20px;
+  text-align: right;
+}
+
+#user-dash {
+  background-color: rgb(68,182,174);
+  margin-left: 40px;
+}
+
+#user-dash h3 {
+  background: url('../images/appbar.group.png');
+  background-repeat: no-repeat;
+}
+
+#song-dash {
+  background-color: rgb(135,117,167);
+}
+
+#song-dash h3 {
+  background: url('../images/appbar.music.png');
+  background-repeat: no-repeat;
 }
